@@ -1,0 +1,36 @@
+.nav {
+  padding: 2rem 4rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.nav__left__content {
+  flex: 0.5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: x-large;
+  font-weight: 400;
+}
+
+.nav__right {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav__today {
+}
+
+.nav__dashed {
+  padding: 0 0.7rem;
+  font-weight: 200;
+}
+.nav_month {
+  text-transform: uppercase;
+}
+
+.nav__search,
+.nav__add {
+  padding: 0.5rem 1rem;
+}
