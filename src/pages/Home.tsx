@@ -7,25 +7,49 @@ import {
   Input,
   IconButton,
   Textarea,
+  Heading,
   VStack,
 } from '@chakra-ui/react';
-import { FC, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { Formik, Form } from 'formik';
 import { FaPlus } from 'react-icons/fa';
-import { addDoc, collection, Timestamp } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  Timestamp,
+  query,
+  orderBy,
+  onSnapshot,
+} from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import 'react-calendar/dist/Calendar.css';
 import { TaskType } from '../lib/types';
+import { TaskCard } from '../components/TaskCard';
 
 const Home: FC = () => {
   const [date, setDate] = useState(new Date());
+  const [tasks, setTasks] = useState<TaskType[]>([]);
+
+  useEffect(() => {
+    const q = query(collection(db, 'tasks'), orderBy('created_at', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const tasks = snapshot.docs.map((doc) => {
+        const data = doc.data() as TaskType;
+        data.id = doc.id;
+        return data;
+      });
+      setTasks(tasks);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   return (
     <Container
       maxW="container.xl"
       d="flex"
       justifyContent="space-between"
-      alignItems="center"
       py="4"
       minH="full"
       h="full"
@@ -97,7 +121,14 @@ const Home: FC = () => {
           )}
         </Formik>
       </Box>
-      <Box flex="4"></Box>
+      <Box flex="4" d="flex" flexDirection="column">
+        <Heading as="h3">Tasks</Heading>
+        <VStack>
+          {tasks.map((task) => (
+            <TaskCard task={task} key={task.id} />
+          ))}
+        </VStack>
+      </Box>
       <Box flex="3"></Box>
     </Container>
   );
