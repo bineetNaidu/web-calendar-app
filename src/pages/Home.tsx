@@ -6,12 +6,16 @@ import {
   Divider,
   Input,
   IconButton,
-  HStack,
+  Textarea,
+  VStack,
 } from '@chakra-ui/react';
 import { FC, useState } from 'react';
 import { Formik, Form } from 'formik';
 import { FaPlus } from 'react-icons/fa';
+import { addDoc, collection, Timestamp } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import 'react-calendar/dist/Calendar.css';
+import { TaskType } from '../lib/types';
 
 const Home: FC = () => {
   const [date, setDate] = useState(new Date());
@@ -30,7 +34,13 @@ const Home: FC = () => {
         <Calendar className="bg-transparent" onChange={setDate} view="month" />
         <Divider my="6" />
         <Box mb="4">
-          <Text as="span" textDecoration="Highlight" fontStyle="italic">
+          <Text
+            as="span"
+            textDecoration="Highlight"
+            fontStyle="italic"
+            fontWeight="extrabold"
+          >
+            -&gt;{' '}
             {date.toLocaleDateString('en-US', {
               day: 'numeric',
               month: 'long',
@@ -50,25 +60,39 @@ const Home: FC = () => {
           </Text>
         </Box>
         <Formik
-          initialValues={{ task: '' }}
-          onSubmit={(values, { setSubmitting, setValues }) => {
-            console.log('values', values);
+          initialValues={{ title: '', description: '' }}
+          onSubmit={async (values, { setSubmitting, setValues }) => {
+            const data: Omit<TaskType, 'id'> = {
+              created_at: Timestamp.now() as any,
+              done: false,
+              created_user_id: '',
+              description: values.description,
+              title: values.title,
+            };
+
+            await addDoc(collection(db, 'tasks'), data);
+
             setSubmitting(false);
-            setValues({ task: '' });
+            setValues({ title: '', description: '' });
           }}
         >
           {({ isSubmitting, getFieldProps }) => (
             <Form>
-              <HStack>
-                <Input placeholder="Add Task" {...getFieldProps('task')} />
+              <VStack>
+                <Input placeholder="Title" {...getFieldProps('title')} />
+                <Textarea
+                  placeholder="Description"
+                  {...getFieldProps('description')}
+                />
                 <IconButton
                   isLoading={isSubmitting}
                   aria-label="add task btn"
+                  w="full"
                   type="submit"
                   colorScheme="green"
                   icon={<FaPlus />}
                 />
-              </HStack>
+              </VStack>
             </Form>
           )}
         </Formik>
