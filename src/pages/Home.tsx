@@ -9,6 +9,7 @@ import {
   Textarea,
   Heading,
   VStack,
+  Center,
 } from '@chakra-ui/react';
 import { FC, useState, useEffect } from 'react';
 import { Formik, Form } from 'formik';
@@ -59,7 +60,7 @@ const Home: FC = () => {
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [user.id]);
 
   return (
     <Container
@@ -140,9 +141,15 @@ const Home: FC = () => {
       <Box flex="4" d="flex" flexDirection="column">
         <Heading as="h3">Tasks</Heading>
         <VStack>
-          {tasks.map((task) => (
-            <TaskCard task={task} key={task.id} />
-          ))}
+          {tasks.length ? (
+            tasks.map((task) => <TaskCard task={task} key={task.id} />)
+          ) : (
+            <Center>
+              <Text color="gray.500" fontStyle="italic">
+                -- No tasks --
+              </Text>
+            </Center>
+          )}
         </VStack>
       </Box>
       <Box flex="3"></Box>
