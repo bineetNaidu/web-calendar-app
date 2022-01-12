@@ -25,10 +25,21 @@ import { db } from '../lib/firebase';
 import 'react-calendar/dist/Calendar.css';
 import { TaskType } from '../lib/types';
 import { TaskCard } from '../components/TaskCard';
+import { useUserStore } from '../lib/user.store';
+import { useNavigate } from 'react-router-dom';
 
 const Home: FC = () => {
+  const user = useUserStore((s) => s.user);
+  const navigate = useNavigate();
+
   const [date, setDate] = useState(new Date());
   const [tasks, setTasks] = useState<TaskType[]>([]);
+
+  useEffect(() => {
+    if (!user.isAuthenticated) {
+      navigate('/product');
+    }
+  }, [navigate, user.isAuthenticated]);
 
   useEffect(() => {
     const q = query(collection(db, 'tasks'), orderBy('created_at', 'desc'));
