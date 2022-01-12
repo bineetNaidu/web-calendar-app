@@ -20,6 +20,7 @@ import {
   query,
   orderBy,
   onSnapshot,
+  where,
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import 'react-calendar/dist/Calendar.css';
@@ -42,7 +43,11 @@ const Home: FC = () => {
   }, [navigate, user.isAuthenticated]);
 
   useEffect(() => {
-    const q = query(collection(db, 'tasks'), orderBy('created_at', 'desc'));
+    const q = query(
+      collection(db, 'tasks'),
+      orderBy('created_at', 'desc'),
+      where('created_user_id', '==', user.id)
+    );
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const tasks = snapshot.docs.map((doc) => {
         const data = doc.data() as TaskType;
@@ -100,7 +105,7 @@ const Home: FC = () => {
             const data: Omit<TaskType, 'id'> = {
               created_at: Timestamp.now() as any,
               done: false,
-              created_user_id: '',
+              created_user_id: user.id,
               description: values.description,
               title: values.title,
             };
