@@ -8,12 +8,29 @@ import {
   Heading,
   ButtonGroup,
   IconButton,
+  Avatar,
+  Button,
 } from '@chakra-ui/react';
 import { FaUserCircle, FaSearch } from 'react-icons/fa';
 import { IoIosNotifications } from 'react-icons/io';
 import { HiDotsHorizontal } from 'react-icons/hi';
+import { useUserStore } from '../lib/user.store';
 
 const Navbar: FC = () => {
+  const user = useUserStore((s) => s.user);
+
+  const links = user.isAuthenticated ? (
+    <>
+      <IconButton aria-label="Notifications" icon={<IoIosNotifications />} />
+      <IconButton aria-label="view morw" icon={<HiDotsHorizontal />} />
+      <Button>
+        <Avatar name={user.name} src={user.photoURL} />
+      </Button>
+    </>
+  ) : (
+    <IconButton aria-label="Not User" icon={<FaUserCircle />} />
+  );
+
   return (
     <Container
       maxW="container.xl"
@@ -36,12 +53,7 @@ const Navbar: FC = () => {
       </Box>
       <Box flex="3" d="flex" justifyContent="flex-end">
         <ButtonGroup spacing="4" size="md" variant="outline">
-          <IconButton
-            aria-label="Notifications"
-            icon={<IoIosNotifications />}
-          />
-          <IconButton aria-label="view morw" icon={<HiDotsHorizontal />} />
-          <IconButton aria-label="user" icon={<FaUserCircle />} />
+          {links}
         </ButtonGroup>
       </Box>
     </Container>
