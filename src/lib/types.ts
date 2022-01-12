@@ -13,6 +13,7 @@ export interface TaskType extends BaseResourceType {
 export interface UserType extends BaseResourceType {
   name: string;
   email: string;
+  photoURL: string;
 }
 
 export interface TodoType extends BaseResourceType {

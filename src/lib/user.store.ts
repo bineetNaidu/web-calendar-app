@@ -12,6 +12,7 @@ export const useUserStore = create<UserStoreType>((set) => ({
     name: '',
     email: '',
     created_at: '',
+    photoURL: '',
     isAuthenticated: false,
   },
   setUser: (user) =>
