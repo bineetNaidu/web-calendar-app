@@ -9,23 +9,32 @@ import {
   ButtonGroup,
   IconButton,
   Avatar,
-  Button,
 } from '@chakra-ui/react';
 import { FaUserCircle, FaSearch } from 'react-icons/fa';
 import { IoIosNotifications } from 'react-icons/io';
 import { HiDotsHorizontal } from 'react-icons/hi';
 import { useUserStore } from '../lib/user.store';
+import { getAuth } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar: FC = () => {
-  const user = useUserStore((s) => s.user);
+  const { user, logout } = useUserStore((s) => s);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    const auth = getAuth();
+    await auth.signOut();
+    logout();
+    navigate('/product');
+  };
 
   const links = user.isAuthenticated ? (
     <>
       <IconButton aria-label="Notifications" icon={<IoIosNotifications />} />
       <IconButton aria-label="view morw" icon={<HiDotsHorizontal />} />
-      <Button>
-        <Avatar name={user.name} src={user.photoURL} />
-      </Button>
+      <IconButton aria-label="auth user" onClick={handleLogout}>
+        <Avatar size="sm" name={user.name} src={user.photoURL} />
+      </IconButton>
     </>
   ) : (
     <IconButton aria-label="Not User" icon={<FaUserCircle />} />
