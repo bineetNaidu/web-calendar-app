@@ -3,14 +3,22 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { ChakraProvider } from '@chakra-ui/react';
+import {
+  ChakraProvider,
+  ColorModeScript,
+  ColorModeProvider,
+} from '@chakra-ui/react';
 import { BrowserRouter } from 'react-router-dom';
+import { theme } from './lib/chakraui.theme';
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
       <ChakraProvider resetCSS>
-        <App />
+        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+        <ColorModeProvider options={{ initialColorMode: 'dark' }}>
+          <App />
+        </ColorModeProvider>
       </ChakraProvider>
     </BrowserRouter>
   </React.StrictMode>,
